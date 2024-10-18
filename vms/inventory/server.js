@@ -5,7 +5,6 @@ dotenv.config({ path: '../.env' });
 
 const app = express();
 const port = process.env.INVENTORY_PORT;
-console.log("keke", process.env.GATEWAY_HOST);
 
 const checkClientIP = (req, res, next) => {
   const clientIP = req.ip;
@@ -26,7 +25,7 @@ const sequelize = new Sequelize(
   process.env.INVENTORY_DB_USER,
   process.env.INVENTORY_DB_PASSWORD,
   {
-    host: 'localhost',
+    host: process.env.INVENTORY_DB_HOST,
     port: process.env.INVENTORY_DB_PORT,
     dialect: 'postgres'
   }

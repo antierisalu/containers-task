@@ -2,7 +2,7 @@ import express from 'express';
 import { createProxyMiddleware } from 'http-proxy-middleware';
 import dotenv from 'dotenv';
 
-dotenv.config();
+dotenv.config({ path: './../.env' });
 
 const app = express();
 const port = process.env.GATEWAY_PORT // Default to 3000 if not set

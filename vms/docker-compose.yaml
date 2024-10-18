@@ -1,0 +1,91 @@
+services:
+  gateway:
+    container_name: gateway
+    build: ./gateway
+    ports:
+      - "${GATEWAY_PORT}:${GATEWAY_PORT}"
+    networks:
+      app-network:
+        ipv4_address: ${GATEWAY_HOST}
+    env_file:
+      - .env
+    restart: always
+
+#Inventory
+  inventory:
+    container_name: inventory
+    build: ./inventory
+    ports:
+      - "${INVENTORY_PORT}:${INVENTORY_PORT}"
+    networks:
+      app-network:
+        ipv4_address: ${INVENTORY_HOST}
+    env_file:
+      - .env
+    restart: always
+
+  inventory-db:
+    container_name: inventory-db
+    image: postgres:13
+    networks:
+      app-network:
+        ipv4_address: ${INVENTORY_DB_HOST}
+    env_file:
+      - .env
+    volumes:
+      - ./inventory/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+      - inventory-db-data:/var/lib/postgresql/data
+    restart: always
+
+# #Billing
+#   billing:
+#     container_name: billing
+#     build: ./billing
+#     ports:
+#       - "${BILLING_PORT}:${BILLING_PORT}"
+#     networks:
+#       app-network:
+#         ipv4_address: ${BILLING_HOST}
+#     env_file:
+#       - .env
+#     restart: always
+
+#   billing-db:
+#     container_name: billing-db
+#     image: postgres:13
+#     networks:
+#       app-network:
+#         ipv4_address: ${BILLING_DB_HOST}
+#     env_file:
+#       - .env
+#     volumes:
+#       - ./billing/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
+#       - billing-db-data:/var/lib/postgresql/data
+#     restart: always
+
+# #RabbitMQ
+#   rabbitmq:
+#     container_name: rabbitmq
+#     image: rabbitmq:3.13-management
+#     ports:
+#       - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
+#     networks:
+#       app-network:
+#         ipv4_address: ${RABBITMQ_HOST}
+#     env_file:
+#       - .env
+#     restart: always
+
+#Volumes
+volumes:
+  inventory-db-data:
+  # billing-db-data:
+  # gateway-data:
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
+
