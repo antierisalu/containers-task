@@ -1,13 +1,32 @@
 #! /bin/bash
 
 sudo apt-get update
-sudo apt-get install -y docker.io
+sudo apt-get install -y ca-certificates
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+# Add the repository to Apt sources:
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin 
 
 sudo usermod -aG docker vagrant
 
-sudo systemctl enable docker --now
-sudo systemctl enable containerd --now
+newgrp docker
 
-# Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+
+# Change ownership of the Docker socket
+sudo chown root:docker /var/run/docker.sock
+
+# Set correct permissions for the Docker socket
+sudo chmod 666 /var/run/docker.sock
+
+# Ensure the changes take effect immediately
+sudo systemctl daemon-reload
+sudo systemctl restart docker

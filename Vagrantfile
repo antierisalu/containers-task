@@ -20,7 +20,8 @@ Vagrant.configure("2") do |config|
     m.vm.network "forwarded_port", guest: 3000, host: 3000  # Gateway
 
     # Update and install necessary packages
-    m.vm.provision "shell", run: "once", path: "./scripts/dockerinstall.sh", privileged: false
+    m.vm.provision "shell", run: "once", path: "./scripts/dockerinstall.sh"
+    m.vm.provision "shell", inline: "sleep 3", privileged: false
     m.vm.provision "shell", privileged: false, inline: <<-SHELL
       cd /vagrant/vms
       docker compose up -d

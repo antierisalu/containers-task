@@ -9,7 +9,6 @@ services:
         ipv4_address: ${GATEWAY_HOST}
     env_file:
       - .env
-    restart: always
 
 #Inventory
   inventory:
@@ -22,20 +21,30 @@ services:
         ipv4_address: ${INVENTORY_HOST}
     env_file:
       - .env
-    restart: always
+    depends_on:
+      - inventory-db
 
   inventory-db:
     container_name: inventory-db
     image: postgres:13
+    ports:
+      - "${INVENTORY_DB_PORT}:${INVENTORY_DB_PORT}"
     networks:
       app-network:
         ipv4_address: ${INVENTORY_DB_HOST}
+    environment:
+      - POSTGRES_PASSWORD=${INVENTORY_DB_PASSWORD}
     env_file:
       - .env
     volumes:
       - ./inventory/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
       - inventory-db-data:/var/lib/postgresql/data
-    restart: always
+    # command: >
+    #  sh -c '
+    #    echo "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+    #    echo "INVENTORY_DB_PASSWORD=${INVENTORY_DB_PASSWORD}"
+    #    docker-entrypoint.sh postgres
+    #  '
 
 # #Billing
 #   billing:
@@ -56,9 +65,11 @@ services:
 #     networks:
 #       app-network:
 #         ipv4_address: ${BILLING_DB_HOST}
-#     env_file:
-#       - .env
-#     volumes:
+    # environment:
+    #   - POSTGRES_PASSWORD=${BILLING_DB_PASSWORD}
+    # env_file:
+    #   - .env
+    # volumes:
 #       - ./billing/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
 #       - billing-db-data:/var/lib/postgresql/data
 #     restart: always

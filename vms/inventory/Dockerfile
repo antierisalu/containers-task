@@ -17,4 +17,4 @@ COPY . .
 EXPOSE ${INVENTORY_PORT}
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]
