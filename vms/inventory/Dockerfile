@@ -1,5 +1,8 @@
-# Use an official Node runtime as the base image
-FROM node:22-alpine
+# Use the penultimate stable version of Alpine as the base image
+FROM alpine:3.16
+
+# Install Node.js and npm
+RUN apk add --no-cache nodejs npm
 
 # Set the working directory in the container
 WORKDIR /app

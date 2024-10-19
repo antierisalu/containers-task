@@ -7,6 +7,21 @@ dotenv.config({ path: './../.env' });
 const app = express();
 const port = process.env.GATEWAY_PORT // Default to 3000 if not set
 
+app.use((req, res, next) => {
+    // Log the incoming request method and URL
+    console.log(`Incoming request: ${req.method} ${req.url}`);
+
+    // Log request headers
+    console.log('Request Headers:', req.headers);
+
+    // Log request body (for POST/PUT requests)
+    if (req.method === 'POST' || req.method === 'PUT') {
+        console.log('Request Body:', req.body);
+    }
+
+    next(); // Call the next middleware
+});
+
 // Proxy for /movies
 const inventoryProxy = createProxyMiddleware({
     target: process.env.GATEWAY_INVENTORY_URL,
@@ -19,7 +34,6 @@ const inventoryProxy = createProxyMiddleware({
 });
 
 // Proxy for /billing
-console.log(process.env.GATEWAY_BILLING_URL);
 const billingProxy = createProxyMiddleware({
     target: process.env.GATEWAY_BILLING_URL,
     changeOrigin: true,

@@ -3,7 +3,7 @@ import { saveOrderToDatabase } from './database.js';
 
 async function startConsumer() {
   try {
-    const conn = await connect('amqp://localhost');
+    const conn = await connect(`amqp://${process.env.RABBITMQ_HOST}`);
     const channel = await conn.createChannel();
 
     const queue = 'orders_queue';
@@ -36,5 +36,5 @@ async function startConsumer() {
     console.error('Error in RabbitMQ consumer:', error);
   }
 }
-
+console.log("Started consumer")
 startConsumer();

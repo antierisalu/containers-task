@@ -1,0 +1,37 @@
+# Use Alpine as base image
+FROM alpine:3.18
+
+# Set environment variables for RabbitMQ
+ENV RABBITMQ_VERSION=3.12.2 \
+    HOME=/var/lib/rabbitmq
+
+# Install RabbitMQ dependencies (use available Erlang version in Alpine)
+RUN apk add --no-cache \
+    erlang \
+    su-exec \
+    logrotate \
+    bash \
+    curl \
+    gnupg \
+    openssl \
+    ncurses \
+    procps
+
+# Create RabbitMQ user and group BEFORE using chown
+RUN addgroup -S rabbitmq && adduser -S rabbitmq -G rabbitmq
+
+# Download and install RabbitMQ
+RUN curl -L https://github.com/rabbitmq/rabbitmq-server/releases/download/v${RABBITMQ_VERSION}/rabbitmq-server-generic-unix-${RABBITMQ_VERSION}.tar.xz \
+    | tar -xJ -C /usr/local --strip-components=1 \
+    && mkdir -p /var/lib/rabbitmq \
+    && chown -R rabbitmq:rabbitmq /var/lib/rabbitmq \
+    && chmod +x /usr/local/sbin/rabbitmq-server
+
+# Expose the default RabbitMQ management and messaging ports
+EXPOSE 5672 15672
+
+# Set RabbitMQ server as the entry point
+ENTRYPOINT ["/usr/local/sbin/rabbitmq-server"]
+
+# Start RabbitMQ server
+CMD ["start"]

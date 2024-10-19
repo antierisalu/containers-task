@@ -21,12 +21,8 @@ newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
 
-# Change ownership of the Docker socket
 sudo chown root:docker /var/run/docker.sock
-
-# Set correct permissions for the Docker socket
 sudo chmod 666 /var/run/docker.sock
 
-# Ensure the changes take effect immediately
 sudo systemctl daemon-reload
 sudo systemctl restart docker

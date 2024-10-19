@@ -27,7 +27,7 @@ app.post('/', async (req, res) => {
   console.log('Received order:', order);
 
   try {
-    const conn = await connect('amqp://localhost');
+    const conn = await connect(`amqp://${process.env.RABBITMQ_HOST}`);
     const channel = await conn.createChannel();
     const queue = 'orders_queue';
 
@@ -43,5 +43,5 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Server is running on ${process.env.GATEWAY_URL}/billing`);
+  console.log(`Billing is running on ${process.env.GATEWAY_URL}/billing`);
 });
