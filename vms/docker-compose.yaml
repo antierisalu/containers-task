@@ -11,7 +11,7 @@ services:
       - .env
     volumes:
       - gateway-data:/app/logs
-    restart: unless-stopped
+    restart: on-failure
 
 #Inventory
   inventory-db:
@@ -34,7 +34,7 @@ services:
        interval: 5s
        timeout: 5s
        retries: 5
-    restart: always
+    restart: on-failure
   
   inventory:
     container_name: inventory
@@ -49,7 +49,7 @@ services:
     depends_on:
         inventory-db:
           condition: service_healthy
-    restart: always
+    restart: on-failure
 
 #Billing
   billing-db:
@@ -70,7 +70,7 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
-    restart: always
+    restart: on-failure
 
   billing:
     container_name: billing
@@ -85,7 +85,7 @@ services:
     depends_on:
         billing-db:
           condition: service_healthy 
-    restart: always
+    restart: on-failure
 
 #RabbitMQ
   rabbitmq:
@@ -100,7 +100,7 @@ services:
         ipv4_address: ${RABBITMQ_HOST}
     env_file:
       - .env
-    restart: always
+    restart: on-failure
 
 #Volumes
 volumes:
