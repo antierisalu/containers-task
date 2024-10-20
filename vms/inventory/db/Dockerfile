@@ -1,16 +1,11 @@
-# Use the penultimate stable version of Alpine
-FROM alpine:3.16
+FROM debian:bullseye
 
-# Install PostgreSQL
-RUN apk add --no-cache postgresql postgresql-contrib
+RUN apt-get update && apt-get install -y postgresql-13 postgresql-contrib
 
-# Set environment variables
-ENV POSTGRES_USER=${INVENTORY_DB_USER}
-ENV POSTGRES_PASSWORD=${INVENTORY_DB_PASSWORD}
-ENV POSTGRES_DB=${INVENTORY_DB_NAME}
+USER postgres
 
-# Expose the PostgreSQL port
-EXPOSE 5432
+RUN rm -rf /var/lib/postgresql/13/main
 
-# Initialize database and run PostgreSQL
-CMD ["sh", "-c", "pg_ctl init && pg_ctl start"]
+COPY ./setup_db.sh /tmp/setup_db.sh
+
+ENTRYPOINT [ "bash", "/tmp/setup_db.sh" ]

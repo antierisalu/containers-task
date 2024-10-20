@@ -16,7 +16,7 @@ services:
 #Inventory
   inventory-db:
     container_name: inventory-db
-    image: postgres:13
+    build: ./inventory/db
     ports:
       - "${INVENTORY_DB_PORT}:${INVENTORY_DB_PORT}"
     networks:
@@ -30,7 +30,7 @@ services:
       - ./inventory/db/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
       - inventory-db-data:/var/lib/postgresql/data
     healthcheck:
-       test: ["CMD-SHELL", "pg_isready -U ${INVENTORY_DB_USER}"]
+       test: ["CMD-SHELL", "pg_isready -U ${INVENTORY_DB_USER} -d ${INVENTORY_DB_NAME}"]
        interval: 5s
        timeout: 5s
        retries: 5
@@ -54,7 +54,7 @@ services:
 #Billing
   billing-db:
     container_name: billing-db
-    image: postgres:13
+    build: ./billing/db
     networks:
       app-network:
         ipv4_address: ${BILLING_DB_HOST}
@@ -66,7 +66,7 @@ services:
       - ./billing/db/setup-db.sql:/docker-entrypoint-initdb.d/setup-db.sql
       - billing-db-data:/var/lib/postgresql/data
     healthcheck:
-        test: ["CMD-SHELL", "pg_isready -U ${BILLING_DB_USER}"]
+        test: ["CMD-SHELL", "pg_isready -U ${BILLING_DB_USER} -d ${BILLING_DB_NAME}"]
         interval: 5s
         timeout: 5s
         retries: 5

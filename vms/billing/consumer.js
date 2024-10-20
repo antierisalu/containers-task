@@ -24,8 +24,7 @@ async function startConsumer() {
           channel.ack(msg);
         } catch (error) {
           console.error('Error processing order:', error);
-          // Optionally requeue the message
-          // channel.nack(msg, false, true);
+          // channel.nack(msg, false, true); // if you want to requeue but it started spamming some why
         }
       }
     }, {
