@@ -56,6 +56,7 @@ const billingProxy = createProxyMiddleware({
     }
 });
 
+
 // Use the proxy middleware for all routes
 app.use('/movies', inventoryProxy);
 app.use('/billing', billingProxy);
@@ -63,5 +64,5 @@ app.use('/billing', billingProxy);
 app.listen(port, '0.0.0.0', () => {
     logger.info(`Proxy server running at ${process.env.GATEWAY_URL}/`); // Use logger.info instead of logger.log
     logger.info(`Proxying /movies requests to ${process.env.GATEWAY_INVENTORY_URL}`);
-    logger.info(`Proxying /billing requests to ${process.env.GATEWAY_BILLING_URL}`);
+    logger.info(`Proxying /billing queue requests to ${process.env.GATEWAY_BILLING_URL}`);
 });

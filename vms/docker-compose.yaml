@@ -11,7 +11,7 @@ services:
       - .env
     volumes:
       - gateway-data:/app/logs
-    restart: on-failure
+    restart: always
 
 #Inventory
   inventory-db:
@@ -34,7 +34,7 @@ services:
        interval: 5s
        timeout: 5s
        retries: 5
-    restart: on-failure
+    restart: always
   
   inventory:
     container_name: inventory
@@ -49,7 +49,7 @@ services:
     depends_on:
         inventory-db:
           condition: service_healthy
-    restart: on-failure
+    restart: always
 
 #Billing
   billing-db:
@@ -70,7 +70,7 @@ services:
         interval: 5s
         timeout: 5s
         retries: 5
-    restart: on-failure
+    restart: always
 
   billing:
     container_name: billing
@@ -85,14 +85,12 @@ services:
     depends_on:
         billing-db:
           condition: service_healthy 
-    restart: on-failure
+    restart: always
 
 #RabbitMQ
   rabbitmq:
     container_name: rabbitmq
-    build: 
-      context: .
-      dockerfile: Dockerfile.rabbitmq
+    build: ./rabbit
     ports:
       - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
     networks:
@@ -100,7 +98,7 @@ services:
         ipv4_address: ${RABBITMQ_HOST}
     env_file:
       - .env
-    restart: on-failure
+    restart: always
 
 #Volumes
 volumes:

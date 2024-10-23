@@ -12,4 +12,4 @@ COPY . .
 
 EXPOSE ${BILLING_PORT}
 
-CMD ["sh", "-c", "node consumer.js & node server.js & wait"]
+CMD ["sh", "-c", "node consumer.js"]
